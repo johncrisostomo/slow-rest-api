@@ -40,28 +40,15 @@ function etag(entity, opts) {
 
   try {
     hash = crypto.createHash(opts.algorithm).update(entity, opts.encoding);
+    if (hash) {
+      if (!opts.output || opts.output === 'base64') {
+        hash = hash.digest('base64').replace(/=+$/, '');
+      } else {
+        hash = hash.digest(opts.output);
+      }
+    }
   } catch (e) {
     error = true;
-  }
-
-  if (hash) {
-    if (!opts.output || opts.output === 'base64') {
-      try {
-        hash = hash.digest('base64').replace(/=+$/, '');
-      } catch (e) {
-        error = true;
-      }
-
-      if (!error) {
-        return hash;
-      }
-    }
-
-    try {
-      hash = hash.digest(opts.output);
-    } catch (e) {
-      error = true;
-    }
   }
 
   if (error) {
