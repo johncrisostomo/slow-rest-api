@@ -44,22 +44,24 @@ function etag(entity, opts) {
     error = true;
   }
 
-  if (!opts.output || opts.output === 'base64') {
+  if (hash) {
+    if (!opts.output || opts.output === 'base64') {
+      try {
+        hash = hash.digest('base64').replace(/=+$/, '');
+      } catch (e) {
+        error = true;
+      }
+
+      if (!error) {
+        return hash;
+      }
+    }
+
     try {
-      hash = hash.digest('base64').replace(/=+$/, '');
+      hash = hash.digest(opts.output);
     } catch (e) {
       error = true;
     }
-
-    if (!error) {
-      return hash;
-    }
-  }
-
-  try {
-    hash = hash.digest(opts.output);
-  } catch (e) {
-    error = true;
   }
 
   if (error) {
